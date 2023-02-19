@@ -1,35 +1,37 @@
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestSwitchToConstructor {
     WebDriver driver;
+    private final String URL = "https://stellarburgers.nomoreparties.site/login";
 
     @Before
     public void openBrowser() {
         //При необходимости прохождения тестов в яндекс браузере раскомментировать следующую строку
         //System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\yandexdriver.exe");
         driver = new ChromeDriver();
-        driver.get("https://stellarburgers.nomoreparties.site/login");
+        driver.get(URL);
     }
 
     @Test
     public void testSwitchToConstructor() {
-        driver.findElement(By.xpath(".//p[text()='Конструктор']")).click();
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Войти в аккаунт']")));
+        PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
+        personalCabinetPage.clickConstructor();
+        personalCabinetPage.waitButtonLogin();
+        assertEquals("Войти в аккаунт", personalCabinetPage.getTextLogin());
     }
 
     @Test
     public void testSwitchToLogo() {
-        driver.findElement(By.xpath(".//div/a[@href=\"/\"]")).click();
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Войти в аккаунт']")));
+        PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
+        personalCabinetPage.clickLogo();
+        personalCabinetPage.waitButtonLogin();
+        assertEquals("Войти в аккаунт", personalCabinetPage.getTextLogin());
     }
 
     @After

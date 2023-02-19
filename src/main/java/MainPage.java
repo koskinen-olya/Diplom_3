@@ -3,13 +3,12 @@ import org.openqa.selenium.WebDriver;
 
 public class MainPage {
     private WebDriver driver;
-
-    //локатор для вкладки "Начинки"
     private By filling = By.xpath(".//span[text()='Начинки']");
-    //локатор для вкладки "Булки"
     private By bun = By.xpath(".//span[text()='Булки']");
-    //локатор для вкладки "Соусы"
     private By souse = By.xpath(".//span[text()='Соусы']");
+    private By thisBun = By.xpath(".//p[text()='Флюоресцентная булка R2-D3']");
+    private By thisSouse = By.xpath(".//p[text()='Соус традиционный галактический']");
+    private By thisFulling = By.xpath(".//p[text()='Биокотлета из марсианской Магнолии']");
 
     public MainPage(WebDriver driver) {
         this.driver = driver;
@@ -26,5 +25,17 @@ public class MainPage {
 
     public void clickSouse() {
         driver.findElement(souse).click();
+    }
+    public String getTextBun(){
+        String text = driver.findElement(thisBun).getText();
+        return text;
+    }
+    public String getTextSouse(){
+        String text = driver.findElement(thisSouse).getText();
+        return text;
+    }
+    public String getTextFilling(){
+        String text = driver.findElement(thisFulling).getText();
+        return text;
     }
 }

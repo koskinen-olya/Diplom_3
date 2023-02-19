@@ -1,63 +1,70 @@
 import io.restassured.RestAssured;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestLogin {
     WebDriver driver;
+    ApiClient apiClient = new ApiClient();
+    private final String URL = "https://stellarburgers.nomoreparties.site";
+    //Создание рандомного email
+    static String email = String.format("%s@mail.ru", RandomStringUtils.randomAlphabetic(5).toLowerCase());
+    //Создание рандомного password
+    static String password = String.format("%s", RandomStringUtils.randomNumeric(6).toLowerCase());
+    //Создание рандомного name
+    static String name = String.format("%s", RandomStringUtils.randomAlphabetic(5).toLowerCase());
 
     @Before
     public void openBrowserAndCreateUser() {
         //Открытие браузера
         //При необходимости прохождения тестов в яндекс браузере раскомментировать следующую строку
-        System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\yandexdriver.exe");
+        //System.setProperty("webdriver.chrome.driver", "C:\\WebDriver\\bin\\yandexdriver.exe");
         driver = new ChromeDriver();
-        driver.get("https://stellarburgers.nomoreparties.site/");
+        driver.get(URL);
         //Создание пользователя
-        RestAssured.baseURI = "https://stellarburgers.nomoreparties.site";
-        ApiClient apiClient = new ApiClient();
-        apiClient.createUser("userTestLogin@mail.ru", "012345", "userTestLogin");
+        RestAssured.baseURI = URL;
+        apiClient.createUser(email, password, name);
     }
 
     @Test
     public void testLoginFromMainPage() {
         PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
-        personalCabinetPage.login(".//button[text()='Войти в аккаунт']", "userTestLogin@mail.ru", "012345");
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Оформить заказ']")));
+        personalCabinetPage.clickLoginOnMainPage();
+        personalCabinetPage.login(email, password);
+        assertEquals("Оформить заказ", personalCabinetPage.getTextButtonOrder());
     }
 
     @Test
     public void testLoginFromPersonalCabinet() {
         PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
-        personalCabinetPage.login(".//p[text()='Личный Кабинет']", "userTestLogin@mail.ru", "012345");
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Оформить заказ']")));
+        personalCabinetPage.clickLoginOnPC();
+        personalCabinetPage.login(email, password);
+        assertEquals("Оформить заказ", personalCabinetPage.getTextButtonOrder());
     }
 
     @Test
     public void testLoginFromRegistr() {
-        driver.findElement(By.xpath(".//p[text()='Личный Кабинет']")).click();
-        driver.findElement(By.xpath(".//a[text()='Зарегистрироваться']")).click();
         PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
-        personalCabinetPage.login(".//a[text()='Войти']", "userTestLogin@mail.ru", "012345");
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Оформить заказ']")));
+        personalCabinetPage.clickLoginOnPC();
+        personalCabinetPage.clickLoginFromPC();
+        personalCabinetPage.clickButtonLoginInPageRegistr();
+        personalCabinetPage.login(email, password);
+        assertEquals("Оформить заказ", personalCabinetPage.getTextButtonOrder());
     }
 
     @Test
     public void testLoginFromRecovery() {
-        driver.findElement(By.xpath(".//p[text()='Личный Кабинет']")).click();
-        driver.findElement(By.xpath(".//a[text()='Восстановить пароль']")).click();
         PersonalCabinetPage personalCabinetPage = new PersonalCabinetPage(driver);
-        personalCabinetPage.login(".//a[text()='Войти']", "userTestLogin@mail.ru", "012345");
-        new WebDriverWait(driver, 3)
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(".//button[text()='Оформить заказ']")));
+        personalCabinetPage.clickLoginOnPC();
+        personalCabinetPage.clickButtonRecovery();
+        personalCabinetPage.clickButtonLoginInPageRegistr();
+        personalCabinetPage.login(email, password);
+        assertEquals("Оформить заказ", personalCabinetPage.getTextButtonOrder());
     }
 
     @After
@@ -65,7 +72,6 @@ public class TestLogin {
         //Закрытие браузера
         driver.quit();
         //Удаление пользователя
-        ApiClient apiClient = new ApiClient();
-        apiClient.deleteUser("userTestLogin@mail.ru", "012345");
+        apiClient.deleteUser(email, password);
     }
 }
