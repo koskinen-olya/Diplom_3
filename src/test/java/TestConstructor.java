@@ -22,21 +22,22 @@ public class TestConstructor {
     public void testSouse() {
         MainPage mainPage = new MainPage(driver);
         mainPage.clickSouse();
-        assertEquals("Соус традиционный галактический", mainPage.getTextSouse());
+        assertEquals("Соусы", mainPage.getText());
     }
 
     @Test
     public void testBun() {
         MainPage mainPage = new MainPage(driver);
+        mainPage.clickFilling();
         mainPage.clickBun();
-        assertEquals("Флюоресцентная булка R2-D3", mainPage.getTextBun());
+        assertEquals("Булки", mainPage.getText());
     }
 
     @Test
     public void testFilling() {
         MainPage mainPage = new MainPage(driver);
         mainPage.clickFilling();
-        assertEquals("Биокотлета из марсианской Магнолии", mainPage.getTextFilling());
+        assertEquals("Начинки", mainPage.getText());
     }
 
     @After

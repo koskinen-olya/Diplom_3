@@ -54,5 +54,6 @@ public class TestRegistration {
         //Удаление пользователя
         RestAssured.baseURI = URL_API;
         apiClient.deleteUser(email, password);
+        apiClient.deleteUser(email, wrongPassword);
     }
 }
